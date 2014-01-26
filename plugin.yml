@@ -1,0 +1,9 @@
+name: CloudConsole
+main: com.Shadowcasted.CloudConsole.CloudConsole
+version: 0.3
+commands:
+   terminate:
+      description: "Drop A Logged In User of CloudConsole"
+      usage: "/terminate <name>"
+      permission: CloudConsole.terminate
+      permission-message: "I'm sorry to say this.. but... you don't have permission ):"
