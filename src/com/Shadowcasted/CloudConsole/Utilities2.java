@@ -9,6 +9,7 @@ import java.net.Socket;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 /**
  *
@@ -73,7 +74,7 @@ public class Utilities2 {
 		}catch(Exception e){}
 	}   
 	
-
+	
 	
 	
 	
@@ -214,6 +215,77 @@ public class Utilities2 {
 			}   
 		}   
 	}
+	
+public static class sendPlayers extends Thread{
+
+		public void run(){
+			try{
+				sleep(100);
+				String list = "[Players] ";
+				Player[] ps = Bukkit.getOnlinePlayers();
+				for(Player p: ps){
+					list+=p.getName().toString()+", ";
+				}
+				say2Chatz(list);
+			} catch(Exception e) {Error("Failed to Send Players");}
+		}
+	}
+
+
+
+
+
+
+
+
+	public static class sendPlayerInfo extends Thread{
+		int ID = 0;
+		Player p;
+		public sendPlayerInfo(int ID, Player player){
+			this.ID = ID;
+			p = player;
+		}
+		public void run(){
+			try{
+				if(!Session[ID].equals("ChatOnly")){
+					String info = "[Player] -info ";
+					info += "[Name]"+p.getName().toString()+"[Name]";
+					info += "[Locate]X: "+(int) p.getLocation().getX() + "  Y: " + (int) p.getLocation().getY() + "  Z: " + (int) p.getLocation().getZ()+"[Locate]";
+					info += "[Health]"+getHealthPercent(p)+"[Health]";
+					info += "[IP]"+p.getAddress().toString()+"[IP]";
+					send2Client(ID, info);
+				}
+			}catch(Exception e){}
+		}
+	}	
+
+	public static String getHealthPercent(Player p){
+		try{
+			int temp = (int) ((p.getHealth() / 20d)*100d);
+			return temp + "%";
+		}catch(Exception e){return "Unable To Parse Health";}
+	}
+	public static void playerParsng(int ID, String msg){
+		if(msg.startsWith("[Players]")){
+			new sendPlayers().start();
+		}else if(msg.startsWith("[Player] -info ")){
+			try{
+				String temp = msg.replace("[Player] -info ", "");
+				new sendPlayerInfo(ID, Bukkit.getPlayer(temp)).start();
+			}catch(Exception e){send2Client(ID, "Failed to grab info");}
+		}
+		
+		
+	}
+	
+
+
+	
+	
+	
+	
+	
+	
 	
 	public static void resetID(int ID){
 		try{
@@ -394,6 +466,10 @@ public class Utilities2 {
 	
 	}
 	
+
+	
+	
+	
 	
 	public static String AllowedOwnerCommands = "all";
 	public static String AllowedAdminCommands = "all";
@@ -409,8 +485,9 @@ public class Utilities2 {
 			} else if(msg.startsWith("@c ")){
 				String temp = msg.replace("@c ", "");
 				Bukkit.broadcastMessage(ChatColor.DARK_GRAY+"["+ChatColor.AQUA+"CloudConsole"+ChatColor.DARK_GRAY + "] ["+ChatColor.RED+"A"+ChatColor.DARK_GRAY+"] <" + ChatColor.WHITE+ username[ID] + ChatColor.DARK_GRAY + "> " + ChatColor.RESET + temp);
-				say2all("[Chat] [CloudConsole] [A] <"+ username[ID] + "> " +temp);
+				say2Chatz("[Chat] [CloudConsole] [A] <"+ username[ID] + "> " +temp);
 			} else if(msg.contains("[Update] ")){setUpdateInfo(ID, msg);}
+			else if (msg.contains("[Player")){playerParsng(ID,msg);}
 		}catch(Exception e){}
 	}    
 	
@@ -423,8 +500,9 @@ public class Utilities2 {
 			else if(msg.startsWith("@c ")){
 				String temp = msg.replace("@c ", "");
 				Bukkit.broadcastMessage(ChatColor.DARK_GRAY+"["+ChatColor.AQUA+"CloudConsole"+ChatColor.DARK_GRAY + "] ["+ChatColor.GREEN+"O"+ChatColor.DARK_GRAY+"] <" + ChatColor.WHITE+ username[ID] + ChatColor.DARK_GRAY + "> " + ChatColor.RESET + temp);
-				say2all("[Chat] [CloudConsole] [O] <"+ username[ID] + "> " +temp);//Bukkit.broadcastMessage(ChatColor.BLACK+"["+ChatColor.AQUA+"CloudConsole"+ChatColor.BLACK + "]");
+				say2Chatz("[Chat] [CloudConsole] [O] <"+ username[ID] + "> " +temp);//Bukkit.broadcastMessage(ChatColor.BLACK+"["+ChatColor.AQUA+"CloudConsole"+ChatColor.BLACK + "]");
 			} else if(msg.contains("[Update] ")){setUpdateInfo(ID, msg);}
+			else if (msg.contains("[Player")){playerParsng(ID,msg);}
             
 		}catch(Exception e){}
 	}    
@@ -433,8 +511,9 @@ public class Utilities2 {
 			if(msg.startsWith("@c ")){
 				String temp = msg.replace("@c ", "");
 				Bukkit.broadcastMessage(ChatColor.DARK_GRAY+"["+ChatColor.AQUA+"CloudConsole"+ChatColor.DARK_GRAY + "] ["+ChatColor.LIGHT_PURPLE+"C"+ChatColor.DARK_GRAY+"] <" + ChatColor.WHITE+ username[ID] + ChatColor.DARK_GRAY + "> " + ChatColor.RESET + temp);//Bukkit.broadcastMessage(ChatColor.BLACK+"["+ChatColor.AQUA+"CloudConsole"+ChatColor.BLACK + "]");
-				say2all("[Chat] [CloudConsole] [C] <"+ username[ID] + "> " +temp);//Bukkit.broadcastMessage(ChatColor.BLACK+"["+ChatColor.AQUA+"CloudConsole"+ChatColor.BLACK + "]");
+				say2Chatz("[Chat] [CloudConsole] [C] <"+ username[ID] + "> " +temp);//Bukkit.broadcastMessage(ChatColor.BLACK+"["+ChatColor.AQUA+"CloudConsole"+ChatColor.BLACK + "]");
 			} else if(msg.contains("[Update] ")){setUpdateInfo(ID, msg);}
+			else if (msg.contains("[Player")){playerParsng(ID,msg);}
             
 		}catch(Exception e){}
 	}
@@ -447,8 +526,9 @@ public class Utilities2 {
 			else if(msg.startsWith("@c ")){
 				String temp = msg.replace("@c ", "");
 				Bukkit.broadcastMessage(ChatColor.DARK_GRAY+"["+ChatColor.AQUA+"CloudConsole"+ChatColor.DARK_GRAY + "] ["+ChatColor.BLUE+"M"+ChatColor.DARK_GRAY+"] <" + ChatColor.WHITE+ username[ID] + ChatColor.DARK_GRAY + "> " + ChatColor.RESET + temp);//Bukkit.broadcastMessage(ChatColor.BLACK+"["+ChatColor.AQUA+"CloudConsole"+ChatColor.BLACK + "]");
-				say2all("[Chat] [CloudConsole] [M] <"+ username[ID] + "> " +temp);
+				say2Chatz("[Chat] [CloudConsole] [M] <"+ username[ID] + "> " +temp);
 			} if(msg.contains("[Update] ")){setUpdateInfo(ID, msg);}
+			else if (msg.contains("[Player")){playerParsng(ID,msg);}
             
 		}catch(Exception e){}
 	}
