@@ -101,7 +101,6 @@ public static int port = 25566;
 		}catch(Exception e){}
 		Runme();
 	}
-	//BullCrap Commitz
 	public static void Runme(){
 		boolean isThreadAlive = false;
 		Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
