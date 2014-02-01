@@ -81,7 +81,7 @@ public class Utilities2 {
 	public static class ThreadManager extends Thread{
 
 		public static double[] Version;
-	    public static double allowedVersion = 0.3;
+	    public static double allowedVersion = 1.0;
 		public static ServerSocket server;
 		public static Socket[] sock;
 		public static BufferedReader[] reader;
@@ -182,7 +182,7 @@ public class Utilities2 {
                 public void run(){
                     Utilities2.sleep(700);
                     if(Version[ID] < allowedVersion){
-                        send2Client(ID,"You Dont Have The Correct Version");
+                        send2Client(ID,"You Dont Have The Correct Version Of CloudClient. You Need To Update!");
                         logout(ID);
                     }else{
                     	
@@ -200,6 +200,7 @@ public class Utilities2 {
 				public Inbox(BufferedReader read, int ID){
 					MyReader = read;
 					MyID = ID;
+					
 				}
 				
 				public void run(){
@@ -247,7 +248,7 @@ public static class sendPlayers extends Thread{
 		}
 		public void run(){
 			try{
-				if(!Session[ID].equals("ChatOnly")){
+				if(!Session[ID].equals("ChatOnly")|| Session[ID] != null){
 					String info = "[Player] -info ";
 					info += "[Name]"+p.getName().toString()+"[Name]";
 					info += "[Locate]X: "+(int) p.getLocation().getX() + "  Y: " + (int) p.getLocation().getY() + "  Z: " + (int) p.getLocation().getZ()+"[Locate]";
@@ -277,12 +278,6 @@ public static class sendPlayers extends Thread{
 		
 		
 	}
-	
-
-
-	
-	
-	
 	
 	
 	
@@ -413,7 +408,9 @@ public static class sendPlayers extends Thread{
 					send2Client(ID, "[Debug] You Have Successfully Logged In!");
 				}else{
 					send2Client(ID, "[Debug] Sorry, But Your User:Pass was invalid!");
+					
 					resetID(ID);
+					return;
 				}
 				setUsername(ID, s);
 			}
@@ -454,6 +451,7 @@ public static class sendPlayers extends Thread{
 			String[] SplitUsernameAndPassword = usernameandpass.split(":");
 			username[ID] = SplitUsernameAndPassword[0];
 			debug("["+ID+"]  " + username[ID].toString() + " Logged In");
+			p("[" + ID + "] "+username[ID].toString()+" Logged in!");
 		}catch(Exception e){}
 	}
 	
